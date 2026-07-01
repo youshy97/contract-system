@@ -1,954 +1,350 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>نظام العقود — ERP</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{navy:{950:'#080c14',900:'#0d1117',850:'#111827',800:'#141b2d',750:'#1a2236',700:'#1e2a40',600:'#243047',500:'#2d3a52'},accent:{blue:'#3b6fd4',blueL:'#4d82e8',orange:'#f59e0b',green:'#22c55e',red:'#ef4444',cyan:'#06b6d4'}}}}}</script>
-<style>
-*{box-sizing:border-box;font-family:'Cairo',sans-serif;scrollbar-width:thin;scrollbar-color:#243047 transparent}
-::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#243047;border-radius:4px}
-body{background:#080c14;color:#c9d5e8;min-height:100vh}
-.card{background:#111827;border:1px solid #1e2a40;border-radius:12px}
-.card-sm{background:#141b2d;border:1px solid #1e2a40;border-radius:10px}
-.modal-bg{backdrop-filter:blur(4px);background:rgba(0,0,0,.7)}
-.pill{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600}
-.pill-paid{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3)}
-.pill-unpaid{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
-.pill-transit{background:rgba(59,111,212,.12);color:#4d82e8;border:1px solid rgba(59,111,212,.3)}
-.pill-jebel{background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
-.pill-warehouse{background:rgba(6,182,212,.12);color:#06b6d4;border:1px solid rgba(6,182,212,.3)}
-.pill-delivered{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3)}
-input,select,textarea{background:#1a2236!important;border:1px solid #2d3a52!important;color:#c9d5e8!important;border-radius:8px;padding:8px 12px;width:100%;outline:none;transition:.2s}
-input:focus,select:focus{border-color:#3b6fd4!important;box-shadow:0 0 0 2px rgba(59,111,212,.15)}
-input::placeholder{color:#4a5568}
-.btn-primary{background:linear-gradient(135deg,#3b6fd4,#2d5cbf);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-weight:600;cursor:pointer;transition:.2s;font-family:'Cairo',sans-serif}
-.btn-primary:hover{background:linear-gradient(135deg,#4d82e8,#3b6fd4);transform:translateY(-1px)}
-.btn-danger{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.3);border-radius:8px;padding:6px 14px;font-weight:600;cursor:pointer;font-family:'Cairo',sans-serif;transition:.2s}
-.btn-danger:hover{background:rgba(239,68,68,.2)}
-.btn-ghost{background:rgba(255,255,255,.05);color:#c9d5e8;border:1px solid #2d3a52;border-radius:8px;padding:7px 16px;font-weight:500;cursor:pointer;font-family:'Cairo',sans-serif;transition:.2s}
-.btn-ghost:hover{background:rgba(255,255,255,.1)}
-.stat-card{background:linear-gradient(135deg,#111827,#141b2d);border:1px solid #1e2a40;border-radius:12px;padding:18px 22px;position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:12px 12px 0 0}
-.sc-blue::before{background:linear-gradient(90deg,#3b6fd4,#06b6d4)}
-.sc-orange::before{background:linear-gradient(90deg,#f59e0b,#f97316)}
-.sc-green::before{background:linear-gradient(90deg,#22c55e,#06b6d4)}
-.sc-purple::before{background:linear-gradient(90deg,#8b5cf6,#3b6fd4)}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;cursor:pointer;color:#8899aa;font-weight:500;transition:.2s;font-size:14px}
-.sidebar-item:hover,.sidebar-item.active{background:rgba(59,111,212,.12);color:#4d82e8}
-.sidebar-item.active{border-left:2px solid #3b6fd4;padding-left:12px}
-.topbar{background:rgba(13,17,23,.95);backdrop-filter:blur(12px);border-bottom:1px solid #1e2a40}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:fadeIn .25s ease-out}
-.table-row{border-bottom:1px solid rgba(255,255,255,.05);transition:.15s}
-.table-row:hover{background:rgba(255,255,255,.025)}
-.table-row:last-child{border-bottom:none}
-.badge-no{background:#1a2236;color:#6b7a90;border-radius:6px;padding:3px 9px;font-size:13px;font-weight:700;font-family:monospace}
-select option{background:#141b2d;color:#c9d5e8}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام العقود — ERP</title>
+
+  <!-- External Dependencies -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              950: '#080c14',
+              900: '#0d1117',
+              850: '#111827',
+              800: '#141b2d',
+              750: '#1a2236',
+              700: '#1e2a40',
+              600: '#243047',
+              500: '#2d3a52'
+            },
+            accent: {
+              blue: '#3b6fd4',
+              blueL: '#4d82e8',
+              orange: '#f59e0b',
+              green: '#22c55e',
+              red: '#ef4444',
+              cyan: '#06b6d4'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Application Styles -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 h-14">
-  <div class="flex items-center gap-3">
-    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#3b6fd4,#06b6d4)">
-      <i data-lucide="briefcase" style="width:16px;height:16px;color:#fff"></i>
+  <!-- TOP BAR -->
+  <div class="topbar fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 h-14">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#3b6fd4,#06b6d4)">
+        <i data-lucide="briefcase" style="width:16px;height:16px;color:#fff"></i>
+      </div>
+      <div>
+        <div class="text-white font-bold text-sm leading-tight">نظام العقود</div>
+        <div class="text-[10px] leading-tight" style="color:#4a5568">إدارة المشاريع والملفات</div>
+      </div>
     </div>
-    <div>
-      <div class="text-white font-bold text-sm leading-tight">نظام العقود</div>
-      <div class="text-[10px] leading-tight" style="color:#4a5568">إدارة المشاريع والملفات</div>
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <input id="globalSearch" placeholder="بحث في المشاريع والعقود..." style="width:260px;font-size:13px;padding:6px 36px 6px 12px" oninput="globalSearch(this.value)">
+        <i data-lucide="search" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:#4a5568"></i>
+      </div>
+      <button onclick="setView('dashboard')" class="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors" style="background:rgba(255,255,255,.05);color:#c9d5e8;border:1px solid #2d3a52;cursor:pointer">
+        <i data-lucide="layout-dashboard" style="width:14px;height:14px"></i> لوحة التحكم
+      </button>
+      <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,#3b6fd4,#8b5cf6)">JD</div>
     </div>
   </div>
-  <div class="flex items-center gap-4">
-    <div class="relative">
-      <input id="globalSearch" placeholder="بحث في المشاريع والعقود..." style="width:260px;font-size:13px;padding:6px 36px 6px 12px" oninput="globalSearch(this.value)">
-      <i data-lucide="search" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:#4a5568"></i>
-    </div>
-    <button onclick="setView('dashboard')" class="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg transition-colors" style="background:rgba(255,255,255,.05);color:#c9d5e8;border:1px solid #2d3a52;cursor:pointer">
-      <i data-lucide="layout-dashboard" style="width:14px;height:14px"></i> لوحة التحكم
-    </button>
-    <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style="background:linear-gradient(135deg,#3b6fd4,#8b5cf6)">JD</div>
-  </div>
-</div>
 
-<!-- LAYOUT -->
-<div class="flex pt-14 h-screen overflow-hidden">
+  <!-- LAYOUT -->
+  <div class="flex pt-14 h-screen overflow-hidden">
 
-  <!-- SIDEBAR -->
-  <aside id="sidebar" class="w-64 shrink-0 flex flex-col overflow-y-auto border-l" style="background:#0d1117;border-color:#1e2a40">
-    <div class="p-4">
-      <button onclick="setView('dashboard')" class="sidebar-item w-full" id="sb-dashboard">
-        <i data-lucide="layout-dashboard" style="width:16px;height:16px"></i> لوحة التحكم
-      </button>
-      <button onclick="setView('projects')" class="sidebar-item w-full" id="sb-projects">
-        <i data-lucide="folder-open" style="width:16px;height:16px"></i> المشاريع والملفات
-      </button>
-      <button onclick="setView('reports')" class="sidebar-item w-full" id="sb-reports">
-        <i data-lucide="bar-chart-3" style="width:16px;height:16px"></i> التقارير الشاملة
-      </button>
-    </div>
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="w-64 shrink-0 flex flex-col overflow-y-auto border-l" style="background:#0d1117;border-color:#1e2a40">
+      <div class="p-4">
+        <button onclick="setView('dashboard')" class="sidebar-item w-full" id="sb-dashboard">
+          <i data-lucide="layout-dashboard" style="width:16px;height:16px"></i> لوحة التحكم
+        </button>
+        <button onclick="setView('projects')" class="sidebar-item w-full" id="sb-projects">
+          <i data-lucide="folder-open" style="width:16px;height:16px"></i> المشاريع والملفات
+        </button>
+        <button onclick="setView('reports')" class="sidebar-item w-full" id="sb-reports">
+          <i data-lucide="bar-chart-3" style="width:16px;height:16px"></i> التقارير الشاملة
+        </button>
+      </div>
 
-    <div class="px-4 pb-2 mt-2">
-      <div class="text-[10px] uppercase tracking-widest mb-2" style="color:#2d3a52;font-weight:700">المشاريع</div>
-      <div id="sidebarProjects" class="space-y-1"></div>
-    </div>
+      <div class="px-4 pb-2 mt-2">
+        <div class="text-[10px] uppercase tracking-widest mb-2" style="color:#2d3a52;font-weight:700">المشاريع</div>
+        <div id="sidebarProjects" class="space-y-1"></div>
+      </div>
 
-    <div class="mt-auto p-4">
-      <button onclick="openAddProject()" class="btn-primary w-full text-sm flex items-center justify-center gap-2">
-        <i data-lucide="plus" style="width:15px;height:15px"></i> إضافة مشروع
-      </button>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="flex-1 overflow-y-auto">
-
-    <!-- DASHBOARD VIEW -->
-    <div id="view-dashboard" class="p-6 fade-in">
-      <!-- Header -->
-      <div class="flex items-start justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-bold text-white">لوحة تحكم محفظة العقود</h1>
-          <p class="text-sm mt-1" style="color:#6b7a90">إشراف وتحليل فوري لالتزامات المشاريع والجداول الزمنية</p>
-        </div>
-        <button onclick="openAddProject()" class="btn-primary flex items-center gap-2 text-sm">
+      <div class="mt-auto p-4">
+        <button onclick="openAddProject()" class="btn-primary w-full text-sm flex items-center justify-center gap-2">
           <i data-lucide="plus" style="width:15px;height:15px"></i> إضافة مشروع
         </button>
       </div>
+    </aside>
 
-      <!-- KPI Cards -->
-      <div class="grid grid-cols-4 gap-4 mb-6" id="kpiCards"></div>
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto">
 
-      <!-- Logistics Pipeline -->
-      <div class="card p-5 mb-6">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-bold text-white text-sm">خط سير التوريدات واللوجستيات</h3>
-          <i data-lucide="route" style="width:16px;height:16px;color:#4d82e8"></i>
-        </div>
-        <div class="grid grid-cols-5 gap-3" id="logisticsPipeline"></div>
-      </div>
-
-      <!-- Charts Row -->
-      <div class="grid grid-cols-2 gap-5 mb-6">
-        <div class="card p-5">
-          <h3 class="font-bold text-white text-sm mb-4">حالات شحنات الموردين النشطة</h3>
-          <div style="height:220px;position:relative"><canvas id="barChart"></canvas></div>
-        </div>
-        <div class="card p-5">
-          <h3 class="font-bold text-white text-sm mb-4">العقد الرئيسي مقابل التزامات الموردين</h3>
-          <div style="height:220px;position:relative"><canvas id="donutChart"></canvas></div>
-        </div>
-      </div>
-
-      <!-- Recent Activity -->
-      <div class="card">
-        <div class="flex items-center justify-between px-5 py-4 border-b" style="border-color:#1e2a40">
-          <h3 class="font-bold text-white text-sm">أحدث التحديثات والنشاطات</h3>
-          <i data-lucide="activity" style="width:15px;height:15px;color:#4d82e8"></i>
-        </div>
-        <div id="recentActivity">
-          <div class="grid text-xs font-semibold px-5 py-2.5" style="grid-template-columns:2fr 3fr 1fr 1fr;color:#4a5568;border-bottom:1px solid #1e2a40">
-            <span>المشروع</span><span>الحدث / الحركة</span><span>المستخدم</span><span class="text-left">التوقيت</span>
-          </div>
-          <div id="activityRows"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PROJECTS LIST VIEW -->
-    <div id="view-projects" class="hidden p-6 fade-in">
-      <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-xl font-bold text-white">المشاريع والملفات</h1>
-          <p class="text-sm mt-0.5" style="color:#6b7a90">إدارة المشاريع الرئيسية وعقود الشراء</p>
-        </div>
-        <button onclick="openAddProject()" class="btn-primary flex items-center gap-2 text-sm">
-          <i data-lucide="plus" style="width:15px;height:15px"></i> مشروع جديد
-        </button>
-      </div>
-      <div id="projectsList" class="grid grid-cols-1 gap-4"></div>
-    </div>
-
-    <!-- PROJECT DETAIL VIEW -->
-    <div id="view-project-detail" class="hidden p-6 fade-in">
-      <div class="flex items-center gap-3 mb-5">
-        <button onclick="setView('projects')" class="btn-ghost text-sm flex items-center gap-1.5">
-          <i data-lucide="chevron-right" style="width:15px;height:15px"></i> المشاريع
-        </button>
-        <i data-lucide="chevron-left" style="width:14px;height:14px;color:#4a5568"></i>
-        <span id="detailProjectName" class="text-white font-bold"></span>
-      </div>
-
-      <!-- Project Header Card -->
-      <div class="card p-5 mb-5" id="detailProjectCard"></div>
-
-      <!-- Purchase Contracts -->
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-bold text-white">عقود الشراء <span id="contractsBadge" class="text-xs px-2 py-0.5 rounded-full ml-2" style="background:rgba(59,111,212,.15);color:#4d82e8"></span></h3>
-        <button onclick="openAddPurchaseContract()" class="btn-primary flex items-center gap-2 text-sm">
-          <i data-lucide="plus" style="width:14px;height:14px"></i> إضافة عقد شراء
-        </button>
-      </div>
-      <div id="purchaseContractsList" class="space-y-4"></div>
-    </div>
-
-    <!-- REPORTS VIEW -->
-    <div id="view-reports" class="hidden p-6 fade-in">
-      <h1 class="text-xl font-bold text-white mb-6">التقارير الشاملة</h1>
-      <div id="reportsContent"></div>
-    </div>
-
-  </main>
-</div>
-
-<!-- ============ MODALS ============ -->
-
-<!-- Add Project Modal -->
-<div id="modalAddProject" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
-  <div class="card w-full max-w-2xl max-h-[90vh] overflow-y-auto" style="animation:fadeIn .2s ease">
-    <div class="flex items-center justify-between px-6 py-4 border-b" style="border-color:#1e2a40">
-      <h3 class="text-white font-bold text-lg">إضافة مشروع رئيسي جديد</h3>
-      <button onclick="closeModal('modalAddProject')" style="color:#6b7a90;cursor:pointer;background:none;border:none"><i data-lucide="x" style="width:20px;height:20px"></i></button>
-    </div>
-    <div class="p-6 space-y-4">
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">اسم المشروع *</label>
-          <input id="pj_name" placeholder="مثال: مشروع البنية التحتية الذكية">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">رقم العقد الرئيسي *</label>
-          <input id="pj_contract_no" placeholder="مثال: CN-2026-001">
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">الكلفة التخمينية للمشروع (دولار)</label>
-          <input id="pj_estimated_cost" type="number" placeholder="0">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">كلفة العقد الفعلية (دولار)</label>
-          <input id="pj_contract_cost" type="number" placeholder="0">
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">الجهة المستفيدة</label>
-          <input id="pj_beneficiary" placeholder="مثال: وزارة الاتصالات">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">الشركة المنفذة</label>
-          <input id="pj_company" placeholder="مثال: شركة النور للمقاولات">
-        </div>
-      </div>
-      <div>
-        <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">مدير المشروع</label>
-        <input id="pj_manager" placeholder="الاسم الكامل لمدير المشروع">
-      </div>
-    </div>
-    <div class="flex justify-end gap-3 px-6 pb-5">
-      <button onclick="closeModal('modalAddProject')" class="btn-ghost text-sm">إلغاء</button>
-      <button onclick="saveProject()" class="btn-primary text-sm">حفظ المشروع</button>
-    </div>
-  </div>
-</div>
-
-<!-- Add Purchase Contract Modal -->
-<div id="modalAddPurchase" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
-  <div class="card w-full max-w-2xl max-h-[90vh] overflow-y-auto" style="animation:fadeIn .2s ease">
-    <div class="flex items-center justify-between px-6 py-4 border-b" style="border-color:#1e2a40">
-      <h3 class="text-white font-bold text-lg">إضافة عقد شراء جديد</h3>
-      <button onclick="closeModal('modalAddPurchase')" style="color:#6b7a90;cursor:pointer;background:none;border:none"><i data-lucide="x" style="width:20px;height:20px"></i></button>
-    </div>
-    <div class="p-6 space-y-4">
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">اسم المورد *</label>
-          <input id="pc_vendor" placeholder="مثال: Samsung Electronics">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">رقم أمر الشراء (PO) *</label>
-          <input id="pc_po" placeholder="مثال: PO-2026-0042">
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">رقم عقد الشراء</label>
-          <input id="pc_contract_no" placeholder="مثال: SC-001">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">عدد الدفعات</label>
-          <select id="pc_installments_count" onchange="renderInstallmentInputs()">
-            <option value="1">1 دفعة</option>
-            <option value="2">2 دفعات</option>
-            <option value="3" selected>3 دفعات</option>
-            <option value="4">4 دفعات</option>
-            <option value="5">5 دفعات</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">وصف المواد / الخدمات</label>
-        <input id="pc_description" placeholder="وصف مختصر لطبيعة الشراء">
-      </div>
-      <div id="installmentInputs" class="space-y-3 pt-2"></div>
-    </div>
-    <div class="flex justify-end gap-3 px-6 pb-5">
-      <button onclick="closeModal('modalAddPurchase')" class="btn-ghost text-sm">إلغاء</button>
-      <button onclick="savePurchaseContract()" class="btn-primary text-sm">حفظ عقد الشراء</button>
-    </div>
-  </div>
-</div>
-
-<!-- Update Status Modal -->
-<div id="modalUpdateStatus" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
-  <div class="card w-full max-w-md" style="animation:fadeIn .2s ease">
-    <div class="flex items-center justify-between px-6 py-4 border-b" style="border-color:#1e2a40">
-      <h3 class="text-white font-bold">تحديث حالة الدفعة</h3>
-      <button onclick="closeModal('modalUpdateStatus')" style="color:#6b7a90;cursor:pointer;background:none;border:none"><i data-lucide="x" style="width:20px;height:20px"></i></button>
-    </div>
-    <div class="p-6 space-y-4">
-      <div>
-        <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">حالة الدفعة</label>
-        <select id="us_payment_status">
-          <option value="unpaid">غير مدفوعة</option>
-          <option value="paid">مدفوعة</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-xs font-semibold mb-1.5" style="color:#8899aa">حالة الشحنة</label>
-        <select id="us_shipment_status">
-          <option value="in_transit">أثناء الشحن</option>
-          <option value="jebel_ali">جمبل علي</option>
-          <option value="warehouse">في المخزن</option>
-          <option value="delivered">تم التسليم</option>
-        </select>
-      </div>
-    </div>
-    <div class="flex justify-end gap-3 px-6 pb-5">
-      <button onclick="closeModal('modalUpdateStatus')" class="btn-ghost text-sm">إلغاء</button>
-      <button onclick="saveInstallmentStatus()" class="btn-primary text-sm">حفظ الحالة</button>
-    </div>
-  </div>
-</div>
-
-<!-- Toast -->
-<div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60] hidden">
-  <div id="toastMsg" class="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold" style="background:#1a2236;border:1px solid #2d3a52;color:#c9d5e8;box-shadow:0 8px 32px rgba(0,0,0,.5)"></div>
-</div>
-
-<script>
-/* ===================== STATE ===================== */
-const STORE = 'erp_v3';
-function load() { try { const d = localStorage.getItem(STORE); return d ? JSON.parse(d) : seed(); } catch(e){ return seed(); } }
-function save(d) { localStorage.setItem(STORE, JSON.stringify(d)); }
-function seed() {
-  const d = { projects: [
-    { id:'p1', name:'Riyadh Smart City Core Phase 1', contractNo:'CN-2026-001', estimatedCost:12000000, contractCost:10500000, beneficiary:'أمانة منطقة الرياض', company:'شركة نيوم للتقنية', manager:'John Doe', purchaseContracts:[
-      { id:'pc1', vendor:'Samsung Electronics', po:'PO-2026-0042', contractNo:'SC-001', description:'أجهزة وشبكات ذكية', installments:[
-        { id:'i1', no:1, amount:500000, currency:'USD', dueDate:'2026-05-01', paymentStatus:'paid', shipmentStatus:'delivered' },
-        { id:'i2', no:2, amount:500000, currency:'USD', dueDate:'2026-07-15', paymentStatus:'unpaid', shipmentStatus:'jebel_ali' },
-        { id:'i3', no:3, amount:300000, currency:'USD', dueDate:'2026-09-01', paymentStatus:'unpaid', shipmentStatus:'in_transit' },
-      ]},
-      { id:'pc2', vendor:'Cisco Systems', po:'PO-2026-0087', contractNo:'SC-002', description:'معدات شبكية وتراخيص برمجية', installments:[
-        { id:'i4', no:1, amount:200000, currency:'USD', dueDate:'2026-06-10', paymentStatus:'paid', shipmentStatus:'warehouse' },
-      ]},
-    ]},
-    { id:'p2', name:'NEOM Infrastructure Expansion', contractNo:'CN-2026-002', estimatedCost:9400000, contractCost:8500000, beneficiary:'هيئة نيوم', company:'بكتل العالمية', manager:'John Doe', purchaseContracts:[
-      { id:'pc3', vendor:'Siemens AG', po:'PO-2026-0055', contractNo:'SC-003', description:'معدات كهربائية ثقيلة', installments:[
-        { id:'i5', no:1, amount:850000, currency:'USD', dueDate:'2026-06-30', paymentStatus:'unpaid', shipmentStatus:'in_transit' },
-        { id:'i6', no:2, amount:850000, currency:'USD', dueDate:'2026-08-30', paymentStatus:'unpaid', shipmentStatus:'in_transit' },
-      ]},
-    ]},
-  ]};
-  save(d); return d;
-}
-
-let db = load();
-let currentProjectId = null;
-let updateTargetKey = null; // 'projectId|pcId|instId'
-let barChartInst = null, donutChartInst = null;
-
-const newId = () => 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
-
-/* ===================== VIEW ROUTER ===================== */
-function setView(v) {
-  ['dashboard','projects','project-detail','reports'].forEach(x => {
-    const el = document.getElementById('view-'+x);
-    if(el){ el.classList.add('hidden'); el.classList.remove('fade-in'); }
-  });
-  const target = document.getElementById('view-'+v);
-  if(target){ target.classList.remove('hidden'); void target.offsetWidth; target.classList.add('fade-in'); }
-  ['dashboard','projects','reports'].forEach(s => {
-    const btn = document.getElementById('sb-'+s);
-    if(btn){ btn.classList.toggle('active', s===v); }
-  });
-  if(v==='dashboard') renderDashboard();
-  if(v==='projects') renderProjectsList();
-  if(v==='reports') renderReports();
-  renderSidebarProjects();
-}
-
-/* ===================== SIDEBAR ===================== */
-function renderSidebarProjects() {
-  const el = document.getElementById('sidebarProjects');
-  el.innerHTML = db.projects.map(p=>`
-    <button onclick="openProjectDetail('${p.id}')" class="sidebar-item w-full text-right" style="font-size:12px">
-      <i data-lucide="folder" style="width:13px;height:13px;flex-shrink:0"></i>
-      <span class="truncate">${p.name}</span>
-    </button>`).join('');
-  lucide.createIcons();
-}
-
-/* ===================== DASHBOARD ===================== */
-function renderDashboard() {
-  const projects = db.projects;
-  const allPCs = projects.flatMap(p => p.purchaseContracts);
-  const allInst = allPCs.flatMap(pc => pc.installments);
-
-  // KPIs
-  const totalContractValue = projects.reduce((s,p)=>s+Number(p.contractCost),0);
-  const vendorCount = new Set(allPCs.map(pc=>pc.vendor)).size;
-  const activeProjects = projects.length;
-  const unpaid = allInst.filter(i=>i.paymentStatus==='unpaid').length;
-
-  document.getElementById('kpiCards').innerHTML = `
-    <div class="stat-card sc-orange">
-      <div class="flex items-center justify-between mb-3">
-        <span class="text-xs font-semibold" style="color:#6b7a90">عقود الموردين</span>
-        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(245,158,11,.12)">
-          <i data-lucide="truck" style="width:17px;height:17px;color:#f59e0b"></i>
-        </div>
-      </div>
-      <div class="text-3xl font-extrabold text-white">${allPCs.length}</div>
-      <div class="text-xs mt-1" style="color:#6b7a90">إجمالي عقود الشراء النشطة</div>
-    </div>
-    <div class="stat-card sc-blue">
-      <div class="flex items-center justify-between mb-3">
-        <span class="text-xs font-semibold" style="color:#6b7a90">قيمة العقود الرئيسية</span>
-        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(59,111,212,.12)">
-          <i data-lucide="dollar-sign" style="width:17px;height:17px;color:#4d82e8"></i>
-        </div>
-      </div>
-      <div class="text-3xl font-extrabold text-white">$${fmtNum(totalContractValue)}</div>
-      <div class="text-xs mt-1" style="color:#6b7a90">إجمالي قيمة عقود المشاريع</div>
-    </div>
-    <div class="stat-card sc-green">
-      <div class="flex items-center justify-between mb-3">
-        <span class="text-xs font-semibold" style="color:#6b7a90">المشاريع النشطة</span>
-        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(34,197,94,.12)">
-          <i data-lucide="zap" style="width:17px;height:17px;color:#22c55e"></i>
-        </div>
-      </div>
-      <div class="text-3xl font-extrabold text-white">${activeProjects}</div>
-      <div class="text-xs mt-1" style="color:#6b7a90">مشاريع قيد التنفيذ</div>
-    </div>
-    <div class="stat-card sc-purple">
-      <div class="flex items-center justify-between mb-3">
-        <span class="text-xs font-semibold" style="color:#6b7a90">دفعات معلقة</span>
-        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:rgba(239,68,68,.12)">
-          <i data-lucide="alert-triangle" style="width:17px;height:17px;color:#ef4444"></i>
-        </div>
-      </div>
-      <div class="text-3xl font-extrabold text-white">${unpaid}</div>
-      <div class="text-xs mt-1" style="color:#6b7a90">دفعات غير مدفوعة</div>
-    </div>`;
-
-  // Logistics pipeline
-  const statuses = [
-    { key:'in_transit', label:'قيد الشحن الدولي', icon:'plane', color:'#4d82e8' },
-    { key:'jebel_ali', label:'في الميناء', icon:'anchor', color:'#f59e0b' },
-    { key:'warehouse', label:'التخليص الجمركي', icon:'package-check', color:'#06b6d4' },
-    { key:'delivered', label:'داخل المستودع', icon:'warehouse', color:'#22c55e' },
-    { key:'total', label:'إجمالي الشحنات', icon:'boxes', color:'#8b5cf6' },
-  ];
-  const pipeline = document.getElementById('logisticsPipeline');
-  pipeline.innerHTML = statuses.map(s=>{
-    const count = s.key==='total' ? allInst.length : allInst.filter(i=>i.shipmentStatus===s.key).length;
-    return `<div class="card-sm p-4 text-center">
-      <div class="w-10 h-10 rounded-xl mx-auto mb-2 flex items-center justify-center" style="background:${s.color}18">
-        <i data-lucide="${s.icon}" style="width:18px;height:18px;color:${s.color}"></i>
-      </div>
-      <div class="text-2xl font-extrabold text-white">${count}</div>
-      <div class="text-[11px] mt-0.5" style="color:#6b7a90">${s.label}</div>
-    </div>`;
-  }).join('');
-
-  // Bar Chart
-  const shipmentLabels = ['قيد الشحن','في المخزن','في الميناء','التخليص الجمركي','في المستودع','تم التسليم'];
-  const shipmentKeys = ['in_transit','warehouse','jebel_ali','warehouse','warehouse','delivered'];
-  const barData = [
-    allInst.filter(i=>i.shipmentStatus==='in_transit').length,
-    allInst.filter(i=>i.shipmentStatus==='warehouse').length,
-    allInst.filter(i=>i.shipmentStatus==='jebel_ali').length,
-    allInst.filter(i=>i.paymentStatus==='unpaid').length,
-    allInst.filter(i=>i.paymentStatus==='paid').length,
-    allInst.filter(i=>i.shipmentStatus==='delivered').length,
-  ];
-  const barLabels = ['أثناء الشحن','في المخزن','جمبل علي','غير مدفوع','مدفوع','تم التسليم'];
-  const barColors = ['#4d82e8','#06b6d4','#f59e0b','#ef4444','#22c55e','#22c55e'];
-
-  if(barChartInst) barChartInst.destroy();
-  const barCtx = document.getElementById('barChart').getContext('2d');
-  barChartInst = new Chart(barCtx, {
-    type:'bar', data:{ labels:barLabels, datasets:[{
-      data:barData, backgroundColor:barColors.map(c=>c+'99'),
-      borderColor:barColors, borderWidth:2, borderRadius:6, borderSkipped:false,
-    }]},
-    options:{ responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`العدد: ${c.raw}`}} },
-      scales:{
-        x:{grid:{color:'rgba(255,255,255,.04)',drawBorder:false},ticks:{color:'#6b7a90',font:{size:10,family:'Cairo'}}},
-        y:{grid:{color:'rgba(255,255,255,.04)',drawBorder:false},ticks:{color:'#6b7a90',stepSize:1,font:{size:10}},beginAtZero:true},
-      }
-    }
-  });
-
-  // Donut Chart
-  const totalVendors = allInst.reduce((s,i)=>s+Number(i.amount),0);
-  const totalMain = totalContractValue;
-  if(donutChartInst) donutChartInst.destroy();
-  const donutCtx = document.getElementById('donutChart').getContext('2d');
-  donutChartInst = new Chart(donutCtx, {
-    type:'doughnut', data:{
-      labels:['قيمة العقد الرئيسية','حق الموردين'],
-      datasets:[{ data:[totalMain, totalVendors], backgroundColor:['#4d82e8cc','#f59e0bcc'], borderColor:['#4d82e8','#f59e0b'], borderWidth:2, hoverOffset:4 }]
-    },
-    options:{ responsive:true, maintainAspectRatio:false, cutout:'68%',
-      plugins:{ legend:{ position:'bottom', labels:{ color:'#8899aa', font:{size:11,family:'Cairo'}, boxWidth:12, padding:16 }},
-        tooltip:{callbacks:{label:c=>`$${fmtNum(c.raw)}`}} }
-    }
-  });
-
-  // Recent Activity (derived from contracts)
-  const acts = [];
-  db.projects.forEach(p=>{
-    p.purchaseContracts.forEach(pc=>{
-      pc.installments.forEach(i=>{
-        acts.push({ project:p.name, event:`${pc.vendor} — الدفعة #${i.no} — ${shipmentLabel(i.shipmentStatus)}`, user:'John Doe', date:i.dueDate });
-      });
-    });
-  });
-  acts.sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('activityRows').innerHTML = acts.slice(0,6).map((a,idx)=>`
-    <div class="grid items-center px-5 py-3 table-row text-sm" style="grid-template-columns:2fr 3fr 1fr 1fr">
-      <span class="font-semibold truncate" style="color:#c9d5e8;max-width:180px">${a.project}</span>
-      <span style="color:#8899aa;font-size:12px">${a.event}</span>
-      <span style="color:#6b7a90;font-size:12px">${a.user}</span>
-      <span class="text-left" style="color:#4a5568;font-size:11px;font-family:monospace">${a.date}</span>
-    </div>`).join('') || '<div class="px-5 py-8 text-center text-sm" style="color:#4a5568">لا توجد نشاطات</div>';
-
-  lucide.createIcons();
-}
-
-/* ===================== PROJECTS LIST ===================== */
-function renderProjectsList() {
-  const el = document.getElementById('projectsList');
-  if(!db.projects.length){ el.innerHTML = `<div class="card p-12 text-center"><i data-lucide="folder-plus" style="width:40px;height:40px;color:#2d3a52;margin:0 auto 12px"></i><p style="color:#4a5568">لا توجد مشاريع. أضف مشروعاً جديداً.</p></div>`; lucide.createIcons(); return; }
-  el.innerHTML = db.projects.map(p => {
-    const pcs = p.purchaseContracts;
-    const allInst = pcs.flatMap(pc=>pc.installments);
-    const paid = allInst.filter(i=>i.paymentStatus==='paid').reduce((s,i)=>s+i.amount,0);
-    const total = allInst.reduce((s,i)=>s+i.amount,0);
-    const pct = total ? Math.round(paid/total*100) : 0;
-    const progressColor = pct>=75 ? '#22c55e' : pct>=40 ? '#f59e0b' : '#ef4444';
-    return `<div class="card p-5 cursor-pointer hover:border-blue-800 transition-colors" style="border-color:#1e2a40" onclick="openProjectDetail('${p.id}')">
-      <div class="flex items-start justify-between mb-4">
-        <div class="flex-1">
-          <div class="flex items-center gap-3 mb-1">
-            <span class="w-2 h-2 rounded-full" style="background:${progressColor};flex-shrink:0"></span>
-            <h3 class="text-white font-bold text-base">${p.name}</h3>
-          </div>
-          <div class="flex items-center gap-3 text-xs" style="color:#6b7a90;padding-right:20px">
-            <span>${p.contractNo}</span>
-            <span>·</span><span>${p.beneficiary}</span>
-            <span>·</span><span>م.م: ${p.manager}</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs px-3 py-1 rounded-full font-semibold" style="background:rgba(59,111,212,.12);color:#4d82e8">${pcs.length} عقد شراء</span>
-          <button onclick="event.stopPropagation();deleteProject('${p.id}')" class="btn-danger text-xs px-2 py-1"><i data-lucide="trash-2" style="width:13px;height:13px"></i></button>
-        </div>
-      </div>
-      <div class="grid grid-cols-4 gap-4 mb-4">
-        <div class="card-sm p-3">
-          <div class="text-[10px] font-semibold mb-1" style="color:#6b7a90">الكلفة التخمينية</div>
-          <div class="font-bold text-sm text-white">$${fmtNum(p.estimatedCost)}</div>
-        </div>
-        <div class="card-sm p-3">
-          <div class="text-[10px] font-semibold mb-1" style="color:#6b7a90">كلفة العقد</div>
-          <div class="font-bold text-sm text-white">$${fmtNum(p.contractCost)}</div>
-        </div>
-        <div class="card-sm p-3">
-          <div class="text-[10px] font-semibold mb-1" style="color:#6b7a90">إجمالي مدفوع</div>
-          <div class="font-bold text-sm" style="color:#22c55e">$${fmtNum(paid)}</div>
-        </div>
-        <div class="card-sm p-3">
-          <div class="text-[10px] font-semibold mb-1" style="color:#6b7a90">الشركة المنفذة</div>
-          <div class="font-bold text-sm text-white truncate">${p.company}</div>
-        </div>
-      </div>
-      <div>
-        <div class="flex justify-between text-[11px] mb-1.5" style="color:#6b7a90">
-          <span>نسبة السداد</span><span style="color:${progressColor}">${pct}%</span>
-        </div>
-        <div style="height:5px;background:#1e2a40;border-radius:99px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:${progressColor};border-radius:99px;transition:.5s"></div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  lucide.createIcons();
-}
-
-/* ===================== PROJECT DETAIL ===================== */
-function openProjectDetail(id) {
-  currentProjectId = id;
-  setView('project-detail');
-  const p = db.projects.find(x=>x.id===id);
-  if(!p) return;
-  document.getElementById('detailProjectName').textContent = p.name;
-  document.getElementById('contractsBadge').textContent = `${p.purchaseContracts.length} عقد`;
-
-  // Header Card
-  const allInst = p.purchaseContracts.flatMap(pc=>pc.installments);
-  const paid = allInst.filter(i=>i.paymentStatus==='paid').reduce((s,i)=>s+i.amount,0);
-  const total = allInst.reduce((s,i)=>s+i.amount,0);
-  document.getElementById('detailProjectCard').innerHTML = `
-    <div class="grid grid-cols-3 gap-6 mb-5">
-      <div>
-        <div class="text-[10px] font-semibold mb-1" style="color:#6b7a90">اسم المشروع</div>
-        <div class="font-bold text-white">${p.name}</div>
-      </div>
-      <div>
-        <div class="text-[10px] font-semibold mb-1" style="color:#6b7a90">رقم العقد الرئيسي</div>
-        <div class="font-bold" style="color:#4d82e8">${p.contractNo}</div>
-      </div>
-      <div>
-        <div class="text-[10px] font-semibold mb-1" style="color:#6b7a90">الجهة المستفيدة</div>
-        <div class="font-bold text-white">${p.beneficiary}</div>
-      </div>
-    </div>
-    <div class="grid grid-cols-4 gap-4 mb-5">
-      <div class="card-sm p-3">
-        <div class="text-[10px] mb-1" style="color:#6b7a90">الكلفة التخمينية</div>
-        <div class="font-bold text-white">$${fmtNum(p.estimatedCost)}</div>
-      </div>
-      <div class="card-sm p-3">
-        <div class="text-[10px] mb-1" style="color:#6b7a90">كلفة العقد</div>
-        <div class="font-bold" style="color:#4d82e8">$${fmtNum(p.contractCost)}</div>
-      </div>
-      <div class="card-sm p-3">
-        <div class="text-[10px] mb-1" style="color:#6b7a90">المدفوع من المشتريات</div>
-        <div class="font-bold" style="color:#22c55e">$${fmtNum(paid)}</div>
-      </div>
-      <div class="card-sm p-3">
-        <div class="text-[10px] mb-1" style="color:#6b7a90">الشركة المنفذة</div>
-        <div class="font-bold text-white text-xs truncate">${p.company}</div>
-      </div>
-    </div>
-    <div class="flex items-center gap-6 text-sm" style="color:#8899aa">
-      <span>مدير المشروع: <span class="text-white font-semibold">${p.manager}</span></span>
-    </div>`;
-
-  renderPurchaseContracts(p);
-  lucide.createIcons();
-}
-
-function renderPurchaseContracts(p) {
-  const el = document.getElementById('purchaseContractsList');
-  if(!p.purchaseContracts.length){
-    el.innerHTML = `<div class="card p-10 text-center"><p style="color:#4a5568">لا توجد عقود شراء. أضف عقد شراء جديد.</p></div>`;
-    lucide.createIcons(); return;
-  }
-  el.innerHTML = p.purchaseContracts.map(pc => {
-    const instTotal = pc.installments.reduce((s,i)=>s+i.amount,0);
-    const paidCount = pc.installments.filter(i=>i.paymentStatus==='paid').length;
-    return `<div class="card overflow-hidden">
-      <!-- PC Header -->
-      <div class="flex items-center justify-between px-5 py-4 border-b" style="border-color:#1e2a40;background:#141b2d">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:rgba(59,111,212,.15)">
-            <i data-lucide="file-text" style="width:15px;height:15px;color:#4d82e8"></i>
-          </div>
+      <!-- DASHBOARD VIEW -->
+      <div id="view-dashboard" class="p-6 fade-in">
+        <div class="flex items-start justify-between mb-6">
           <div>
-            <div class="font-bold text-white text-sm">${pc.vendor}</div>
-            <div class="text-[11px] mt-0.5" style="color:#6b7a90">PO: ${pc.po} &nbsp;|&nbsp; ${pc.contractNo||'—'} &nbsp;|&nbsp; ${pc.description||''}</div>
+            <h1 class="text-2xl font-bold text-white">لوحة تحكم محفظة العقود</h1>
+            <p class="text-sm mt-1" style="color:#6b7a90">إشراف وتحليل فوري لالتزامات المشاريع والجداول الزمنية</p>
           </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="text-right">
-            <div class="font-bold text-white">$${fmtNum(instTotal)}</div>
-            <div class="text-[11px]" style="color:#22c55e">مدفوع ${paidCount}/${pc.installments.length}</div>
-          </div>
-          <button onclick="confirmDeletePC('${p.id}','${pc.id}')" class="btn-danger text-xs p-1.5">
-            <i data-lucide="trash-2" style="width:13px;height:13px"></i>
+          <button onclick="openAddProject()" class="btn-primary flex items-center gap-2 text-sm">
+            <i data-lucide="plus" style="width:15px;height:15px"></i> إضافة مشروع
           </button>
         </div>
-      </div>
-      <!-- Installments Table -->
-      <div class="overflow-x-auto">
-        <table style="width:100%;border-collapse:collapse">
-          <thead>
-            <tr style="background:#0d1117;border-bottom:1px solid #1e2a40">
-              <th class="text-right px-4 py-2.5 text-[11px] font-semibold" style="color:#4a5568">رقم الدفعة</th>
-              <th class="text-right px-4 py-2.5 text-[11px] font-semibold" style="color:#4a5568">المبلغ</th>
-              <th class="text-right px-4 py-2.5 text-[11px] font-semibold" style="color:#4a5568">تاريخ الاستحقاق</th>
-              <th class="text-right px-4 py-2.5 text-[11px] font-semibold" style="color:#4a5568">حالة الدفعة</th>
-              <th class="text-right px-4 py-2.5 text-[11px] font-semibold" style="color:#4a5568">حالة الشحنة</th>
-              <th class="px-4 py-2.5"></th>
-            </tr>
-          </thead>
-          <tbody>
-            ${pc.installments.map(i => {
-              const due = daysUntil(i.dueDate);
-              const isDue = due !== null && due <= 3 && i.paymentStatus !== 'paid';
-              return `<tr class="table-row">
-                <td class="px-4 py-3"><span class="badge-no">#${i.no}</span></td>
-                <td class="px-4 py-3 font-bold text-white text-sm">
-                  ${i.currency === 'IQD' ? fmtNum(i.amount)+' د.ع' : '$'+fmtNum(i.amount)}
-                </td>
-                <td class="px-4 py-3 text-sm ${isDue ? 'text-red-400' : ''}" style="color:${isDue?'#ef4444':'#8899aa'}">
-                  ${isDue ? '<span style="display:inline-block;width:6px;height:6px;border-radius:99px;background:#ef4444;margin-left:6px;animation:pulse 1.5s infinite"></span>' : ''}
-                  ${i.dueDate}
-                </td>
-                <td class="px-4 py-3">${paymentBadge(i.paymentStatus)}</td>
-                <td class="px-4 py-3">${shipmentBadge(i.shipmentStatus)}</td>
-                <td class="px-4 py-3 text-left">
-                  <button onclick="openUpdateStatus('${p.id}','${pc.id}','${i.id}')" 
-                    class="text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
-                    style="background:rgba(59,111,212,.1);color:#4d82e8;border:1px solid rgba(59,111,212,.2);cursor:pointer">
-                    تحديث الحالة
-                  </button>
-                </td>
-              </tr>`;
-            }).join('')}
-          </tbody>
-        </table>
-      </div>
-    </div>`;
-  }).join('');
-  lucide.createIcons();
-}
 
-/* ===================== REPORTS ===================== */
-function renderReports() {
-  const el = document.getElementById('reportsContent');
-  let html = `<div class="grid grid-cols-3 gap-4 mb-6">`;
-  db.projects.forEach(p => {
-    const allInst = p.purchaseContracts.flatMap(pc=>pc.installments);
-    const paid = allInst.filter(i=>i.paymentStatus==='paid').reduce((s,i)=>s+i.amount,0);
-    const total = allInst.reduce((s,i)=>s+i.amount,0);
-    const pct = total ? Math.round(paid/total*100) : 0;
-    html += `<div class="card p-4">
-      <div class="font-bold text-white text-sm mb-3 truncate">${p.name}</div>
-      <div class="space-y-2 text-xs">
-        <div class="flex justify-between"><span style="color:#6b7a90">عقد الشراء</span><span class="text-white">${p.contractNo}</span></div>
-        <div class="flex justify-between"><span style="color:#6b7a90">كلفة العقد</span><span class="text-white">$${fmtNum(p.contractCost)}</span></div>
-        <div class="flex justify-between"><span style="color:#6b7a90">المدفوع</span><span style="color:#22c55e">$${fmtNum(paid)}</span></div>
-        <div class="flex justify-between"><span style="color:#6b7a90">المتبقي</span><span style="color:#ef4444">$${fmtNum(total-paid)}</span></div>
-        <div class="flex justify-between"><span style="color:#6b7a90">عقود الشراء</span><span class="text-white">${p.purchaseContracts.length}</span></div>
-      </div>
-      <div class="mt-3">
-        <div style="height:4px;background:#1e2a40;border-radius:99px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:#22c55e;border-radius:99px"></div>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-4 gap-4 mb-6" id="kpiCards"></div>
+
+        <!-- Logistics Pipeline -->
+        <div class="card p-5 mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-white text-sm">خط سير التوريدات واللوجستيات</h3>
+            <i data-lucide="route" style="width:16px;height:16px;color:#4d82e8"></i>
+          </div>
+          <div class="grid grid-cols-5 gap-3" id="logisticsPipeline"></div>
         </div>
-        <div class="text-right text-[10px] mt-1" style="color:#22c55e">${pct}% مكتمل</div>
-      </div>
-    </div>`;
-  });
-  html += `</div>`;
 
-  // Detailed table
-  html += `<div class="card overflow-hidden">
-    <div class="px-5 py-3 border-b font-bold text-white text-sm" style="border-color:#1e2a40;background:#141b2d">جدول عقود الشراء التفصيلي</div>
-    <div class="overflow-x-auto">
-      <table style="width:100%;border-collapse:collapse">
-        <thead>
-          <tr style="background:#0d1117;border-bottom:1px solid #1e2a40">
-            ${['المشروع','المورد','رقم PO','الدفعة','المبلغ','تاريخ الاستحقاق','حالة الدفع','حالة الشحن'].map(h=>`<th class="text-right px-4 py-3 text-[11px] font-semibold" style="color:#4a5568">${h}</th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-          ${db.projects.flatMap(p => p.purchaseContracts.flatMap(pc => pc.installments.map(i => `
-            <tr class="table-row text-sm">
-              <td class="px-4 py-2.5 font-semibold" style="color:#c9d5e8;max-width:150px"><div class="truncate">${p.name}</div></td>
-              <td class="px-4 py-2.5" style="color:#8899aa">${pc.vendor}</td>
-              <td class="px-4 py-2.5 font-mono text-xs" style="color:#6b7a90">${pc.po}</td>
-              <td class="px-4 py-2.5"><span class="badge-no">#${i.no}</span></td>
-              <td class="px-4 py-2.5 font-bold text-white">${i.currency==='IQD'?fmtNum(i.amount)+' د.ع':'$'+fmtNum(i.amount)}</td>
-              <td class="px-4 py-2.5 text-xs" style="color:#8899aa">${i.dueDate}</td>
-              <td class="px-4 py-2.5">${paymentBadge(i.paymentStatus)}</td>
-              <td class="px-4 py-2.5">${shipmentBadge(i.shipmentStatus)}</td>
-            </tr>`))).join('')}
-        </tbody>
-      </table>
+        <!-- Charts Row -->
+        <div class="grid grid-cols-2 gap-5 mb-6">
+          <div class="card p-5">
+            <h3 class="font-bold text-white text-sm mb-4">حالات شحنات الموردين النشطة</h3>
+            <div style="height:220px;position:relative"><canvas id="barChart"></canvas></div>
+          </div>
+          <div class="card p-5">
+            <h3 class="font-bold text-white text-sm mb-4">العقد الرئيسي مقابل التزامات الموردين</h3>
+            <div style="height:220px;position:relative"><canvas id="donutChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+          <div class="flex items-center justify-between px-5 py-4 border-b" style="border-color:#1e2a40">
+            <h3 class="font-bold text-white text-sm">أحدث التحديثات والنشاطات</h3>
+            <i data-lucide="activity" style="width:15px;height:15px;color:#4d82e8"></i>
+          </div>
+          <div id="recentActivity">
+            <div class="grid text-xs font-semibold px-5 py-2.5" style="grid-template-columns:2fr 3fr 1fr 1fr;color:#4a5568;border-bottom:1px solid #1e2a40">
+              <span>المشروع</span><span>الحدث / الحركة</span><span>المستخدم</span><span class="text-left">التوقيت</span>
+            </div>
+            <div id="activityRows"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS LIST VIEW -->
+      <div id="view-projects" class="hidden p-6 fade-in">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-xl font-bold text-white">المشاريع والملفات</h1>
+            <p class="text-sm mt-0.5" style="color:#6b7a90">إدارة المشاريع الرئيسية وعقود الشراء</p>
+          </div>
+          <button onclick="openAddProject()" class="btn-primary flex items-center gap-2 text-sm">
+            <i data-lucide="plus" style="width:15px;height:15px"></i> مشروع جديد
+          </button>
+        </div>
+        <div id="projectsList" class="grid grid-cols-1 gap-4"></div>
+      </div>
+
+      <!-- PROJECT DETAIL VIEW -->
+      <div id="view-project-detail" class="hidden p-6 fade-in">
+        <div class="flex items-center gap-3 mb-5">
+          <button onclick="setView('projects')" class="btn-ghost text-sm flex items-center gap-1.5">
+            <i data-lucide="chevron-right" style="width:15px;height:15px"></i> المشاريع
+          </button>
+          <i data-lucide="chevron-left" style="width:14px;height:14px;color:#4a5568"></i>
+          <span id="detailProjectName" class="text-white font-bold"></span>
+        </div>
+
+        <!-- Project Header Card -->
+        <div class="card p-5 mb-5" id="detailProjectCard"></div>
+
+        <!-- Purchase Contracts -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-white">عقود الشراء <span id="contractsBadge" class="text-xs px-2 py-0.5 rounded-full ml-2" style="background:rgba(59,111,212,.15);color:#4d82e8"></span></h3>
+          <button onclick="openAddPurchaseContract()" class="btn-primary flex items-center gap-2 text-sm">
+            <i data-lucide="plus" style="width:14px;height:14px"></i> إضافة عقد شراء
+          </button>
+        </div>
+        <div id="purchaseContractsList" class="space-y-4"></div>
+      </div>
+
+      <!-- REPORTS VIEW -->
+      <div id="view-reports" class="hidden p-6 fade-in">
+        <h1 class="text-xl font-bold text-white mb-6">التقارير الشاملة</h1>
+        <div id="reportsContent"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ============ MODALS ============ -->
+
+  <!-- Add Project Modal -->
+  <div id="modalAddProject" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
+    <div class="card w-full max-w-2xl max-h-[90vh] overflow-y-auto" style="animation:fadeIn .2s ease">
+      <div class="flex items-center justify-between px-6 py-4 border-b" style="border-color:#1e2a40">
+        <h3 class="text-white font-bold text-lg">إضافة مشروع رئيسي جديد</h3>
+        <button onclick="closeModal('modalAddProject')" style="color:#6b7a90;cursor:pointer;background:none;border:none" type="button" aria-label="إغلاق"><i data-lucide="x" style="width:20px;height:20px"></i></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="pj_name" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">اسم المشروع *</label>
+            <input id="pj_name" placeholder="مثال: مشروع البنية التحتية الذكية">
+          </div>
+          <div>
+            <label for="pj_contract_no" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">رقم العقد الرئيسي *</label>
+            <input id="pj_contract_no" placeholder="مثال: CN-2026-001">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="pj_estimated_cost" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">الكلفة التخمينية للمشروع (دولار)</label>
+            <input id="pj_estimated_cost" type="number" placeholder="0">
+          </div>
+          <div>
+            <label for="pj_contract_cost" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">كلفة العقد الفعلية (دولار)</label>
+            <input id="pj_contract_cost" type="number" placeholder="0">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="pj_beneficiary" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">الجهة المستفيدة</label>
+            <input id="pj_beneficiary" placeholder="مثال: وزارة الاتصالات">
+          </div>
+          <div>
+            <label for="pj_company" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">الشركة المنفذة</label>
+            <input id="pj_company" placeholder="مثال: شركة النور للمقاولات">
+          </div>
+        </div>
+        <div>
+          <label for="pj_manager" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">مدير المشروع</label>
+          <input id="pj_manager" placeholder="الاسم الكامل لمدير المشروع">
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 px-6 pb-5">
+        <button onclick="closeModal('modalAddProject')" class="btn-ghost text-sm" type="button">إلغاء</button>
+        <button onclick="saveProject()" class="btn-primary text-sm" type="button">حفظ المشروع</button>
+      </div>
     </div>
-  </div>`;
-  el.innerHTML = html;
-  lucide.createIcons();
-}
+  </div>
 
-/* ===================== ADD PROJECT ===================== */
-function openAddProject() { document.getElementById('modalAddProject').classList.remove('hidden'); }
-function saveProject() {
-  const name = v('pj_name'); if(!name){ showToast('اسم المشروع مطلوب','error'); return; }
-  const contractNo = v('pj_contract_no'); if(!contractNo){ showToast('رقم العقد مطلوب','error'); return; }
-  db.projects.push({
-    id: newId(), name, contractNo, estimatedCost: num('pj_estimated_cost'),
-    contractCost: num('pj_contract_cost'), beneficiary: v('pj_beneficiary'),
-    company: v('pj_company'), manager: v('pj_manager'), purchaseContracts: [],
-  });
-  save(db);
-  closeModal('modalAddProject');
-  clearFields(['pj_name','pj_contract_no','pj_estimated_cost','pj_contract_cost','pj_beneficiary','pj_company','pj_manager']);
-  showToast('تم إضافة المشروع بنجاح','success');
-  renderProjectsList();
-  renderSidebarProjects();
-}
-function deleteProject(id) {
-  if(!confirm('هل أنت متأكد من حذف هذا المشروع وجميع عقود الشراء المرتبطة به؟')) return;
-  db.projects = db.projects.filter(p=>p.id!==id);
-  save(db); renderProjectsList(); renderSidebarProjects();
-  showToast('تم حذف المشروع','success');
-}
-
-/* ===================== ADD PURCHASE CONTRACT ===================== */
-function openAddPurchaseContract() {
-  document.getElementById('modalAddPurchase').classList.remove('hidden');
-  renderInstallmentInputs();
-}
-function renderInstallmentInputs() {
-  const n = Number(document.getElementById('pc_installments_count').value);
-  const c = document.getElementById('installmentInputs');
-  c.innerHTML = `<div class="text-xs font-bold pt-2 mb-1" style="color:#4d82e8">تفاصيل الدفعات</div>` +
-    Array.from({length:n}, (_,i) => `
-    <div class="card-sm p-3">
-      <div class="text-xs font-semibold mb-2" style="color:#6b7a90">الدفعة ${i+1}</div>
-      <div class="grid grid-cols-3 gap-3">
-        <div>
-          <label class="block text-[10px] mb-1" style="color:#4a5568">المبلغ</label>
-          <input class="inst-amount" type="number" placeholder="0">
+  <!-- Add Purchase Contract Modal -->
+  <div id="modalAddPurchase" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
+    <div class="card w-full max-w-2xl max-h-[90vh] overflow-y-auto" style="animation:fadeIn .2s ease">
+      <div class="flex items-center justify-between px-6 py-4 border-b" style="border-color:#1e2a40">
+        <h3 class="text-white font-bold text-lg">إضافة عقد شراء جديد</h3>
+        <button onclick="closeModal('modalAddPurchase')" style="color:#6b7a90;cursor:pointer;background:none;border:none" type="button" aria-label="إغلاق"><i data-lucide="x" style="width:20px;height:20px"></i></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="pc_vendor" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">اسم المورد *</label>
+            <input id="pc_vendor" placeholder="مثال: Samsung Electronics">
+          </div>
+          <div>
+            <label for="pc_po" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">رقم أمر الشراء (PO) *</label>
+            <input id="pc_po" placeholder="مثال: PO-2026-0042">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="pc_contract_no" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">رقم عقد الشراء</label>
+            <input id="pc_contract_no" placeholder="مثال: SC-001">
+          </div>
+          <div>
+            <label for="pc_installments_count" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">عدد الدفعات</label>
+            <select id="pc_installments_count" onchange="renderInstallmentInputs()">
+              <option value="1">1 دفعة</option>
+              <option value="2">2 دفعات</option>
+              <option value="3" selected>3 دفعات</option>
+              <option value="4">4 دفعات</option>
+              <option value="5">5 دفعات</option>
+            </select>
+          </div>
         </div>
         <div>
-          <label class="block text-[10px] mb-1" style="color:#4a5568">العملة</label>
-          <select class="inst-currency">
-            <option value="USD">دولار USD</option>
-            <option value="IQD">دينار IQD</option>
+          <label for="pc_description" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">وصف المواد / الخدمات</label>
+          <input id="pc_description" placeholder="وصف مختصر لطبيعة الشراء">
+        </div>
+        <div id="installmentInputs" class="space-y-3 pt-2"></div>
+      </div>
+      <div class="flex justify-end gap-3 px-6 pb-5">
+        <button onclick="closeModal('modalAddPurchase')" class="btn-ghost text-sm" type="button">إلغاء</button>
+        <button onclick="savePurchaseContract()" class="btn-primary text-sm" type="button">حفظ عقد الشراء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Status Modal -->
+  <div id="modalUpdateStatus" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg">
+    <div class="card w-full max-w-md" style="animation:fadeIn .2s ease">
+      <div class="flex items-center justify-between px-6 py-4 border-b" style="border-color:#1e2a40">
+        <h3 class="text-white font-bold">تحديث حالة الدفعة</h3>
+        <button onclick="closeModal('modalUpdateStatus')" style="color:#6b7a90;cursor:pointer;background:none;border:none" type="button" aria-label="إغلاق"><i data-lucide="x" style="width:20px;height:20px"></i></button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label for="us_payment_status" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">حالة الدفعة</label>
+          <select id="us_payment_status">
+            <option value="unpaid">غير مدفوعة</option>
+            <option value="paid">مدفوعة</option>
           </select>
         </div>
         <div>
-          <label class="block text-[10px] mb-1" style="color:#4a5568">تاريخ الاستحقاق</label>
-          <input class="inst-date" type="date">
+          <label for="us_shipment_status" class="block text-xs font-semibold mb-1.5" style="color:#8899aa">حالة الشحنة</label>
+          <select id="us_shipment_status">
+            <option value="in_transit">أثناء الشحن</option>
+            <option value="jebel_ali">جمبل علي</option>
+            <option value="warehouse">في المخزن</option>
+            <option value="delivered">تم التسليم</option>
+          </select>
         </div>
       </div>
-    </div>`).join('');
-}
-function savePurchaseContract() {
-  const vendor = v('pc_vendor'); if(!vendor){ showToast('اسم المورد مطلوب','error'); return; }
-  const po = v('pc_po'); if(!po){ showToast('رقم PO مطلوب','error'); return; }
-  const p = db.projects.find(x=>x.id===currentProjectId);
-  if(!p) return;
-  const amounts = [...document.querySelectorAll('.inst-amount')].map(el=>Number(el.value)||0);
-  const currencies = [...document.querySelectorAll('.inst-currency')].map(el=>el.value);
-  const dates = [...document.querySelectorAll('.inst-date')].map(el=>el.value);
-  const installments = amounts.map((amount, idx) => ({
-    id:newId(), no:idx+1, amount, currency:currencies[idx], dueDate:dates[idx]||'—',
-    paymentStatus:'unpaid', shipmentStatus:'in_transit',
-  }));
-  p.purchaseContracts.push({ id:newId(), vendor, po, contractNo:v('pc_contract_no'), description:v('pc_description'), installments });
-  save(db);
-  closeModal('modalAddPurchase');
-  clearFields(['pc_vendor','pc_po','pc_contract_no','pc_description']);
-  showToast('تم إضافة عقد الشراء','success');
-  document.getElementById('contractsBadge').textContent = `${p.purchaseContracts.length} عقد`;
-  renderPurchaseContracts(p);
-}
-function confirmDeletePC(projectId, pcId) {
-  if(!confirm('حذف عقد الشراء وجميع دفعاته؟')) return;
-  const p = db.projects.find(x=>x.id===projectId);
-  if(!p) return;
-  p.purchaseContracts = p.purchaseContracts.filter(x=>x.id!==pcId);
-  save(db);
-  document.getElementById('contractsBadge').textContent = `${p.purchaseContracts.length} عقد`;
-  renderPurchaseContracts(p);
-  showToast('تم حذف عقد الشراء','success');
-}
+      <div class="flex justify-end gap-3 px-6 pb-5">
+        <button onclick="closeModal('modalUpdateStatus')" class="btn-ghost text-sm" type="button">إلغاء</button>
+        <button onclick="saveInstallmentStatus()" class="btn-primary text-sm" type="button">حفظ الحالة</button>
+      </div>
+    </div>
+  </div>
 
-/* ===================== UPDATE STATUS ===================== */
-function openUpdateStatus(projectId, pcId, instId) {
-  updateTargetKey = `${projectId}|${pcId}|${instId}`;
-  const p = db.projects.find(x=>x.id===projectId);
-  const pc = p?.purchaseContracts.find(x=>x.id===pcId);
-  const inst = pc?.installments.find(x=>x.id===instId);
-  if(!inst) return;
-  document.getElementById('us_payment_status').value = inst.paymentStatus;
-  document.getElementById('us_shipment_status').value = inst.shipmentStatus;
-  document.getElementById('modalUpdateStatus').classList.remove('hidden');
-}
-function saveInstallmentStatus() {
-  if(!updateTargetKey) return;
-  const [projectId, pcId, instId] = updateTargetKey.split('|');
-  const p = db.projects.find(x=>x.id===projectId);
-  const pc = p?.purchaseContracts.find(x=>x.id===pcId);
-  const inst = pc?.installments.find(x=>x.id===instId);
-  if(!inst) return;
-  inst.paymentStatus = document.getElementById('us_payment_status').value;
-  inst.shipmentStatus = document.getElementById('us_shipment_status').value;
-  save(db);
-  closeModal('modalUpdateStatus');
-  showToast('تم تحديث الحالة','success');
-  renderPurchaseContracts(p);
-}
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[60] hidden">
+    <div id="toastMsg" class="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold" style="background:#1a2236;border:1px solid #2d3a52;color:#c9d5e8;box-shadow:0 8px 32px rgba(0,0,0,.5)"></div>
+  </div>
 
-/* ===================== GLOBAL SEARCH ===================== */
-function globalSearch(q) {
-  if(!q){ setView('projects'); return; }
-  q = q.toLowerCase();
-  setView('projects');
-  const filtered = db.projects.filter(p =>
-    p.name.toLowerCase().includes(q) || p.contractNo.toLowerCase().includes(q) ||
-    p.beneficiary.toLowerCase().includes(q) || p.company.toLowerCase().includes(q) ||
-    p.purchaseContracts.some(pc => pc.vendor.toLowerCase().includes(q) || pc.po.toLowerCase().includes(q))
-  );
-  const el = document.getElementById('projectsList');
-  if(!filtered.length){ el.innerHTML = `<div class="card p-10 text-center" style="color:#4a5568">لا نتائج لـ "${q}"</div>`; return; }
-  db.projects = filtered;
-  renderProjectsList();
-  db = load();
-}
-
-/* ===================== HELPERS ===================== */
-function v(id){ return document.getElementById(id)?.value?.trim()||''; }
-function num(id){ return Number(document.getElementById(id)?.value)||0; }
-function fmtNum(n){ if(!n) return '0'; if(n>=1e6) return (n/1e6).toFixed(1).replace(/\.0$/,'')+'M'; if(n>=1e3) return (n/1e3).toFixed(1).replace(/\.0$/,'')+'K'; return n.toLocaleString(); }
-function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
-function clearFields(ids){ ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); }
-function daysUntil(d){ if(!d||d==='—') return null; const t=new Date(); t.setHours(0,0,0,0); const due=new Date(d); due.setHours(0,0,0,0); return Math.round((due-t)/86400000); }
-function paymentBadge(s){ return s==='paid' ? '<span class="pill pill-paid">مدفوعة</span>' : '<span class="pill pill-unpaid">غير مدفوعة</span>'; }
-function shipmentBadge(s){ const m={'in_transit':['pill-transit','أثناء الشحن'],'jebel_ali':['pill-jebel','جمبل علي'],'warehouse':['pill-warehouse','في المخزن'],'delivered':['pill-delivered','تم التسليم']}; const r=m[s]||['pill-transit',s]; return `<span class="pill ${r[0]}">${r[1]}</span>`; }
-function shipmentLabel(s){ return {'in_transit':'أثناء الشحن','jebel_ali':'جمبل علي','warehouse':'في المخزن','delivered':'تم التسليم'}[s]||s; }
-function showToast(msg, type='info'){
-  const t=document.getElementById('toast'), m=document.getElementById('toastMsg');
-  const colors={ success:'color:#22c55e;border-color:rgba(34,197,94,.3)', error:'color:#ef4444;border-color:rgba(239,68,68,.3)', info:'color:#4d82e8;border-color:rgba(77,130,232,.3)' };
-  m.style.cssText=`background:#1a2236;border:1px solid #2d3a52;${colors[type]||colors.info};box-shadow:0 8px 32px rgba(0,0,0,.5);border-radius:12px;padding:12px 20px;font-size:14px;font-family:Cairo,sans-serif;display:flex;align-items:center;gap:8px`;
-  m.textContent=msg; t.classList.remove('hidden');
-  setTimeout(()=>t.classList.add('hidden'), 2800);
-}
-
-/* ===================== INIT ===================== */
-document.addEventListener('DOMContentLoaded', ()=>{
-  lucide.createIcons();
-  renderSidebarProjects();
-  setView('dashboard');
-});
-document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.add('hidden'); }));
-</script>
+  <!-- Application Scripts (order matters: utilities first, then features, then main) -->
+  <script src="js/store.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/projects.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/modals.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
