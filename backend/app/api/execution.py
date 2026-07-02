@@ -19,7 +19,7 @@ def list_phases(
 ):
     return (
         db.query(ExecutionPhase)
-        .filter(ExecutionPhase.project_id == project_id, not ExecutionPhase.is_deleted)
+        .filter(ExecutionPhase.project_id == project_id, ExecutionPhase.is_deleted.is_(False))
         .order_by(ExecutionPhase.phase_number)
         .all()
     )
@@ -57,7 +57,7 @@ def update_phase(
 ):
     phase = (
         db.query(ExecutionPhase)
-        .filter(ExecutionPhase.id == phase_id, not ExecutionPhase.is_deleted)
+        .filter(ExecutionPhase.id == phase_id, ExecutionPhase.is_deleted.is_(False))
         .first()
     )
     if not phase:

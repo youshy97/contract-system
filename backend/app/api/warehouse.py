@@ -27,7 +27,7 @@ def list_grns(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = db.query(GoodsReceiptNote).filter(not GoodsReceiptNote.is_deleted)
+    query = db.query(GoodsReceiptNote).filter(GoodsReceiptNote.is_deleted.is_(False))
     if project_id:
         query = query.filter(GoodsReceiptNote.project_id == project_id)
     return query.order_by(GoodsReceiptNote.created_at.desc()).all()

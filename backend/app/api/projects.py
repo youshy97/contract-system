@@ -19,7 +19,7 @@ def list_projects(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = db.query(Project).filter(not Project.is_deleted)
+    query = db.query(Project).filter(Project.is_deleted.is_(False))
     if status:
         query = query.filter(Project.status == status)
     return query.order_by(Project.created_at.desc()).offset(skip).limit(limit).all()
@@ -60,7 +60,7 @@ def get_project(
 ):
     project = (
         db.query(Project)
-        .filter(Project.id == project_id, not Project.is_deleted)
+        .filter(Project.id == project_id, Project.is_deleted.is_(False))
         .first()
     )
     if not project:
@@ -77,7 +77,7 @@ def update_project(
 ):
     project = (
         db.query(Project)
-        .filter(Project.id == project_id, not Project.is_deleted)
+        .filter(Project.id == project_id, Project.is_deleted.is_(False))
         .first()
     )
     if not project:

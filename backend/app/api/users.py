@@ -19,7 +19,7 @@ def list_users(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    return db.query(User).filter(User.is_active).all()
+    return db.query(User).filter(User.is_active.is_(True)).all()
 
 
 @router.put("/{user_id}", response_model=UserResponse)

@@ -27,7 +27,7 @@ def list_boqs(
 ):
     return (
         db.query(BOQ)
-        .filter(BOQ.project_id == project_id, not BOQ.is_deleted)
+        .filter(BOQ.project_id == project_id, BOQ.is_deleted.is_(False))
         .order_by(BOQ.version.desc())
         .all()
     )
@@ -41,7 +41,7 @@ def create_boq(
 ):
     existing = (
         db.query(BOQ)
-        .filter(BOQ.project_id == data.project_id, not BOQ.is_deleted)
+        .filter(BOQ.project_id == data.project_id, BOQ.is_deleted.is_(False))
         .count()
     )
 
@@ -98,7 +98,7 @@ def get_boq(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    boq = db.query(BOQ).filter(BOQ.id == boq_id, not BOQ.is_deleted).first()
+    boq = db.query(BOQ).filter(BOQ.id == boq_id, BOQ.is_deleted.is_(False)).first()
     if not boq:
         raise HTTPException(status_code=404, detail="BOQ not found")
     return boq
@@ -112,13 +112,13 @@ def create_new_version(
     current_user: User = Depends(get_current_user),
 ):
     """Create a new version of an existing BOQ (copies all sections and items)."""
-    original = db.query(BOQ).filter(BOQ.id == boq_id, not BOQ.is_deleted).first()
+    original = db.query(BOQ).filter(BOQ.id == boq_id, BOQ.is_deleted.is_(False)).first()
     if not original:
         raise HTTPException(status_code=404, detail="BOQ not found")
 
     version_count = (
         db.query(BOQ)
-        .filter(BOQ.project_id == original.project_id, not BOQ.is_deleted)
+        .filter(BOQ.project_id == original.project_id, BOQ.is_deleted.is_(False))
         .count()
     )
 
@@ -185,7 +185,7 @@ def add_section(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    boq = db.query(BOQ).filter(BOQ.id == boq_id, not BOQ.is_deleted).first()
+    boq = db.query(BOQ).filter(BOQ.id == boq_id, BOQ.is_deleted.is_(False)).first()
     if not boq:
         raise HTTPException(status_code=404, detail="BOQ not found")
     if boq.status not in ("draft", "repricing"):
@@ -217,7 +217,7 @@ def add_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    boq = db.query(BOQ).filter(BOQ.id == boq_id, not BOQ.is_deleted).first()
+    boq = db.query(BOQ).filter(BOQ.id == boq_id, BOQ.is_deleted.is_(False)).first()
     if not boq:
         raise HTTPException(status_code=404, detail="BOQ not found")
     if boq.status not in ("draft", "repricing"):
@@ -242,7 +242,7 @@ def update_item(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    item = db.query(BOQItem).filter(BOQItem.id == item_id, not BOQItem.is_deleted).first()
+    item = db.query(BOQItem).filter(BOQItem.id == item_id, BOQItem.is_deleted.is_(False)).first()
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
 

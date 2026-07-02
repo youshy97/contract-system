@@ -32,7 +32,7 @@ def list_suppliers(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = db.query(Supplier).filter(not Supplier.is_deleted)
+    query = db.query(Supplier).filter(Supplier.is_deleted.is_(False))
     if supplier_type:
         query = query.filter(Supplier.supplier_type == supplier_type)
     return query.all()
@@ -76,7 +76,7 @@ def list_purchase_requests(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = db.query(PurchaseRequest).filter(not PurchaseRequest.is_deleted)
+    query = db.query(PurchaseRequest).filter(PurchaseRequest.is_deleted.is_(False))
     if project_id:
         query = query.filter(PurchaseRequest.project_id == project_id)
     if status:
@@ -160,7 +160,7 @@ def list_purchase_orders(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = db.query(PurchaseOrder).filter(not PurchaseOrder.is_deleted)
+    query = db.query(PurchaseOrder).filter(PurchaseOrder.is_deleted.is_(False))
     if project_id:
         query = query.filter(PurchaseOrder.project_id == project_id)
     if status:

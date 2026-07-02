@@ -21,44 +21,44 @@ def get_dashboard_summary(
     current_user: User = Depends(get_current_user),
 ):
     """Role-based dashboard data."""
-    total_projects = db.query(Project).filter(not Project.is_deleted).count()
+    total_projects = db.query(Project).filter(Project.is_deleted.is_(False)).count()
     active_projects = (
         db.query(Project)
-        .filter(not Project.is_deleted, Project.status.notin_(["closure", "intake"]))
+        .filter(Project.is_deleted.is_(False), Project.status.notin_(["closure", "intake"]))
         .count()
     )
 
     projects_by_status = (
         db.query(Project.status, func.count(Project.id))
-        .filter(not Project.is_deleted)
+        .filter(Project.is_deleted.is_(False))
         .group_by(Project.status)
         .all()
     )
 
     total_revenue = (
         db.query(func.sum(Invoice.amount))
-        .filter(Invoice.status == "paid", not Invoice.is_deleted)
+        .filter(Invoice.status == "paid", Invoice.is_deleted.is_(False))
         .scalar()
         or 0
     )
 
     pending_invoices = (
         db.query(func.sum(Invoice.amount))
-        .filter(Invoice.status == "issued", not Invoice.is_deleted)
+        .filter(Invoice.status == "issued", Invoice.is_deleted.is_(False))
         .scalar()
         or 0
     )
 
     total_po_value = (
         db.query(func.sum(PurchaseOrder.total_amount))
-        .filter(not PurchaseOrder.is_deleted)
+        .filter(PurchaseOrder.is_deleted.is_(False))
         .scalar()
         or 0
     )
 
     pending_prs = (
         db.query(PurchaseRequest)
-        .filter(PurchaseRequest.status == "submitted", not PurchaseRequest.is_deleted)
+        .filter(PurchaseRequest.status == "submitted", PurchaseRequest.is_deleted.is_(False))
         .count()
     )
 
@@ -66,14 +66,14 @@ def get_dashboard_summary(
         db.query(PurchaseOrder)
         .filter(
             PurchaseOrder.status.in_(["issued", "partially_received"]),
-            not PurchaseOrder.is_deleted,
+            PurchaseOrder.is_deleted.is_(False),
         )
         .count()
     )
 
     avg_progress = (
         db.query(func.avg(ExecutionPhase.progress_percentage))
-        .filter(not ExecutionPhase.is_deleted, ExecutionPhase.status == "in_progress")
+        .filter(ExecutionPhase.is_deleted.is_(False), ExecutionPhase.status == "in_progress")
         .scalar()
         or 0
     )
@@ -81,7 +81,7 @@ def get_dashboard_summary(
     stock_items = db.query(Stock).filter(Stock.quantity_available > 0).count()
 
     boqs_pending_approval = (
-        db.query(BOQ).filter(BOQ.status == "review", not BOQ.is_deleted).count()
+        db.query(BOQ).filter(BOQ.status == "review", BOQ.is_deleted.is_(False)).count()
     )
 
     return {
@@ -119,27 +119,27 @@ def get_project_summary(
 ):
     """Per-project dashboard."""
     project = (
-        db.query(Project).filter(Project.id == project_id, not Project.is_deleted).first()
+        db.query(Project).filter(Project.id == project_id, Project.is_deleted.is_(False)).first()
     )
     if not project:
         return {"error": "Project not found"}
 
     latest_boq = (
         db.query(BOQ)
-        .filter(BOQ.project_id == project_id, not BOQ.is_deleted)
+        .filter(BOQ.project_id == project_id, BOQ.is_deleted.is_(False))
         .order_by(BOQ.version.desc())
         .first()
     )
 
     phases = (
         db.query(ExecutionPhase)
-        .filter(ExecutionPhase.project_id == project_id, not ExecutionPhase.is_deleted)
+        .filter(ExecutionPhase.project_id == project_id, ExecutionPhase.is_deleted.is_(False))
         .all()
     )
 
     total_invoiced = (
         db.query(func.sum(Invoice.amount))
-        .filter(Invoice.project_id == project_id, not Invoice.is_deleted)
+        .filter(Invoice.project_id == project_id, Invoice.is_deleted.is_(False))
         .scalar()
         or 0
     )
@@ -149,7 +149,7 @@ def get_project_summary(
         .filter(
             Invoice.project_id == project_id,
             Invoice.status == "paid",
-            not Invoice.is_deleted,
+            Invoice.is_deleted.is_(False),
         )
         .scalar()
         or 0
@@ -157,7 +157,7 @@ def get_project_summary(
 
     pos = (
         db.query(PurchaseOrder)
-        .filter(PurchaseOrder.project_id == project_id, not PurchaseOrder.is_deleted)
+        .filter(PurchaseOrder.project_id == project_id, PurchaseOrder.is_deleted.is_(False))
         .all()
     )
 

@@ -28,7 +28,7 @@ def list_invoices(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = db.query(Invoice).filter(not Invoice.is_deleted)
+    query = db.query(Invoice).filter(Invoice.is_deleted.is_(False))
     if project_id:
         query = query.filter(Invoice.project_id == project_id)
     if status:
@@ -84,7 +84,7 @@ def list_payment_schedules(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    query = db.query(PaymentSchedule).filter(not PaymentSchedule.is_deleted)
+    query = db.query(PaymentSchedule).filter(PaymentSchedule.is_deleted.is_(False))
     if project_id:
         query = query.filter(PaymentSchedule.project_id == project_id)
     return query.all()
