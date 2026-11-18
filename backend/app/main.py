@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
 from app.api import (
     audit,
@@ -8,13 +9,15 @@ from app.api import (
     dashboard,
     execution,
     finance,
+    numbering,
     procurement,
     projects,
     users,
     warehouse,
 )
 from app.core.config import settings
-from app.core.database import Base, engine
+from app.core.database import Base, SessionLocal, engine
+from app.models.numbering import Company
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -25,36 +28,40 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(auth.router, prefix=settings.API_V1_PREFIX)
-app.include_router(users.router, prefix=settings.API_V1_PREFIX)
-app.include_router(projects.router, prefix=settings.API_V1_PREFIX)
-app.include_router(boq.router, prefix=settings.API_V1_PREFIX)
-app.include_router(procurement.router, prefix=settings.API_V1_PREFIX)
-app.include_router(warehouse.router, prefix=settings.API_V1_PREFIX)
-app.include_router(execution.router, prefix=settings.API_V1_PREFIX)
-app.include_router(finance.router, prefix=settings.API_V1_PREFIX)
-app.include_router(dashboard.router, prefix=settings.API_V1_PREFIX)
-app.include_router(audit.router, prefix=settings.API_V1_PREFIX)
+for module in (
+    auth,
+    users,
+    projects,
+    boq,
+    procurement,
+    warehouse,
+    execution,
+    finance,
+    dashboard,
+    audit,
+    numbering,
+):
+    app.include_router(module.router, prefix=settings.API_V1_PREFIX)
 
 
 @app.on_event("startup")
 def startup():
     Base.metadata.create_all(bind=engine)
+    with SessionLocal() as db:
+        default_company = db.query(Company).filter(Company.code == "AN").first()
+        if default_company is None:
+            db.add(Company(name="شركة الأنوار", code="AN"))
+            db.commit()
 
 
 @app.get("/")
 def root():
-    return {
-        "name": settings.PROJECT_NAME,
-        "version": settings.VERSION,
-        "docs": "/docs",
-    }
+    return {"name": settings.PROJECT_NAME, "version": settings.VERSION, "docs": "/docs"}
 
 
 @app.get("/health")

@@ -11,10 +11,11 @@ import Warehouse from './pages/Warehouse'
 import Execution from './pages/Execution'
 import Finance from './pages/Finance'
 import AuditLog from './pages/AuditLog'
+import NumberGenerator from './pages/NumberGenerator'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
-  if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>
+  if (loading) return <div className="flex items-center justify-center h-screen" dir="rtl">جارٍ تحميل النظام…</div>
   if (!user) return <Navigate to="/login" />
   return children
 }
@@ -23,12 +24,9 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={
-        <ProtectedRoute>
-          <Layout />
-        </ProtectedRoute>
-      }>
+      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
+        <Route path="numbering" element={<NumberGenerator />} />
         <Route path="projects" element={<Projects />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="boq/:id" element={<BOQDetail />} />
@@ -43,11 +41,5 @@ function AppRoutes() {
 }
 
 export default function App() {
-  return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
-  )
+  return <AuthProvider><BrowserRouter><AppRoutes /></BrowserRouter></AuthProvider>
 }

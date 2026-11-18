@@ -1,16 +1,12 @@
 import axios from 'axios'
 
-const API_BASE = '/api/v1'
+const API_BASE = import.meta.env.VITE_API_URL || '/api/v1'
 
-const api = axios.create({
-  baseURL: API_BASE,
-})
+const api = axios.create({ baseURL: API_BASE })
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('erp_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
@@ -27,8 +23,7 @@ api.interceptors.response.use(
 )
 
 export const authAPI = {
-  login: (email, password) =>
-    api.post('/auth/login', new URLSearchParams({ username: email, password })),
+  login: (email, password) => api.post('/auth/login', new URLSearchParams({ username: email, password })),
   register: (data) => api.post('/auth/register', data),
 }
 
@@ -95,13 +90,6 @@ export const dashboardAPI = {
   getProjectSummary: (id) => api.get(`/dashboard/project/${id}/summary`),
 }
 
-export const auditAPI = {
-  getLogs: (params) => api.get('/audit/logs', { params }),
-}
-
-export const usersAPI = {
-  getMe: () => api.get('/users/me'),
-  list: () => api.get('/users'),
-}
-
+export const auditAPI = { getLogs: (params) => api.get('/audit/logs', { params }) }
+export const usersAPI = { getMe: () => api.get('/users/me'), list: () => api.get('/users') }
 export default api

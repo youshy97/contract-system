@@ -2,6 +2,7 @@ from app.models.audit import AuditLog
 from app.models.boq import BOQ, BOQItem, BOQSection
 from app.models.execution import ExecutionPhase
 from app.models.finance import Invoice, PaymentSchedule
+from app.models.numbering import Company, GeneratedNumber, NumberSequence
 from app.models.procurement import ComparisonSheet, PurchaseOrder, PurchaseRequest, Supplier
 from app.models.project import Project
 from app.models.user import User
@@ -24,4 +25,7 @@ __all__ = [
     "Invoice",
     "PaymentSchedule",
     "AuditLog",
+    "Company",
+    "NumberSequence",
+    "GeneratedNumber",
 ]

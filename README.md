@@ -1,89 +1,53 @@
-# Enterprise Project Lifecycle ERP
+# نظام إدارة العقود والفواتير
 
-A full-stack ERP system for engineering/procurement/construction companies, managing the complete project lifecycle from initiation through closure.
+تطبيق ويب لإدارة أرقام العقود والفواتير بشكل مركزي، مع واجهة عربية، شركات متعددة، سجل تدقيق، ودعم لعدة مستخدمين في الوقت نفسه.
 
-## Architecture
+## الصيغة
 
-- **Backend**: FastAPI + SQLAlchemy + PostgreSQL
-- **Frontend**: React + Vite + Tailwind CSS
-- **Database**: PostgreSQL 14+
-- **Auth**: JWT-based with role-based access control
+`رمز الشركة-نوع المستند-السنة-التسلسل`
 
-## Core Modules
+- عقد: `AN-CTR-2026-0001`
+- فاتورة: `AN-INV-2026-0001`
 
-| Module | Description |
-|--------|-------------|
-| **Projects** | Full lifecycle management with status tracking |
-| **BOQ** | Versioned Bill of Quantities with sections & items |
-| **Procurement** | Purchase Requests, Orders, Supplier management, RFQ comparisons |
-| **Warehouse** | GRN, Stock management, Material issues (no direct delivery) |
-| **Execution** | Phase tracking with progress percentages |
-| **Finance** | Invoices, Payment schedules (percentage-based) |
-| **Approval** | Management gate for BOQ approval before customer send |
-| **Audit** | Full change tracking (who, when, what, why) |
-| **Dashboard** | Role-based KPIs and project summaries |
+يبدأ التسلسل من `0001` لكل شركة ونوع مستند وسنة. حجز التسلسل يتم داخل PostgreSQL بعملية ذرّية، لمنع تكرار الرقم عند طلبه بالتزامن.
 
-## Quick Start
+## نشر الموقع على Render (دون تثبيت شيء على الحاسوب)
 
-### Using Docker Compose
+المستودع يحتوي `render.yaml` لتعريف الخدمات الثلاث: قاعدة PostgreSQL، وواجهة FastAPI، وواجهة React الثابتة.
+
+1. ادخل إلى [Render](https://render.com/) وسجّل الدخول عبر GitHub.
+2. اختر **New + → Blueprint**، ثم اربط مستودع `youshy97/contract-system`.
+3. اختر الفرع `feature/contract-invoice-number-generator` عند إنشاء الـ Blueprint.
+4. راجع الخدمات والتكلفة المعروضة، ثم اضغط **Apply**. ينشئ Render قاعدة البيانات وواجهتي الموقع ويربط إعداداتهما.
+5. انتظر اكتمال النشر. افتح خدمة `contract-system-web` من لوحة Render لزيارة رابط الموقع.
+6. سجّل الدخول بحساب من حسابات ERP الحالية. لا تُفعّل التسجيل العام للمستخدمين؛ أنشئ حسابات الموظفين من لوحة الإدارة بعد مراجعة الصلاحيات.
+
+> لا يمكن إنشاء حساب Render أو الموافقة على شروطه أو ربط المستودع نيابةً عن مالك الحساب من GitHub. يلزم تنفيذ خطوات الربط والضغط على Apply مرة واحدة من حسابك. راجع السعر والخطة قبل الموافقة؛ PostgreSQL وخادم API ليسا استضافة ثابتة مجانية، كما قد تختلف الخطط المتاحة حسب المنطقة.
+
+### إعدادات النشر
+
+- واجهة الموقع: `https://contract-system-web.onrender.com`
+- API: `https://contract-system-api.onrender.com`
+- التوثيق: `https://contract-system-api.onrender.com/docs`
+- فحص الخدمة: `https://contract-system-api.onrender.com/health`
+- سر JWT يُولّد من Render ولا يُحفظ في المستودع.
+- جداول الترقيم تُنشأ عند بدء التطبيق، وتضاف شركة `شركة الأنوار (AN)` تلقائياً إن لم تكن موجودة.
+
+إذا غيّرت أسماء خدمات Render، حدّث قيمة `VITE_API_URL` في `render.yaml` إلى عنوان خدمة API الجديدة، ثم أعد النشر.
+
+## التشغيل المحلي الاختياري
 
 ```bash
-docker-compose up -d
+docker compose up -d --build
 ```
 
-### Manual Setup
+- الواجهة: http://localhost:3000
+- API docs: http://localhost:8000/docs
 
-1. **PostgreSQL**:
-```bash
-createdb erp_db
-createuser erp_user -P  # password: erp_password
-```
+## الحسابات
 
-2. **Backend**:
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-python seed.py        # Creates sample data
-uvicorn app.main:app --reload
-```
+استخدم حساباتك الموجودة في ERP. يجب أن يكون المستخدم مسجلاً وفعّالاً لتوليد الأرقام أو عرض السجل. أسماء المستخدمين وتواريخ التوليد تحفظ مع كل رقم. لا تستخدم كلمة مرور افتراضية في بيئة إنتاج؛ غيّرها وأنشئ حسابات فردية لكل موظف.
 
-3. **Frontend**:
-```bash
-cd frontend
-npm install
-npm run dev
-```
+## حدود الإصدار
 
-## Default Credentials
-
-| Role | Email | Password |
-|------|-------|----------|
-| Management | admin@erp.local | password123 |
-| Project Manager | pm@erp.local | password123 |
-| Project Controller | pc@erp.local | password123 |
-| Employee | eng@erp.local | password123 |
-| Department Manager | dm@erp.local | password123 |
-
-## API Documentation
-
-Once running, visit: http://localhost:8000/docs
-
-## Project Workflow
-
-```
-Project Intake → Requirements → BOQ Preparation (Versioned) → Internal Review
-→ Management Approval (GATE) → Customer Proposal → Customer Response
-→ Repricing (if needed) → Procurement → Warehouse → Execution
-→ Progress Tracking → Invoicing → Closure
-```
-
-## Key Business Rules
-
-- Single customer per project
-- All materials MUST pass through warehouse (GRN → Stock → Issue)
-- Every BOQ item traceable to procurement
-- No BOQ sent to customer without Management approval
-- No hard deletes (soft delete with audit trail)
-- Full version history for BOQ changes
+الإصدار الحالي يولّد أرقاماً ويحفظ سجلها ويتيح CSV؛ لا ينشئ مستندات عقد أو فواتير PDF. الاحتفاظ بقاعدة البيانات واستعادتها يعتمد على خطة PostgreSQL والنسخ الاحتياطية المختارة في Render.
